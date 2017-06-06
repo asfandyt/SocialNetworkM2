@@ -16,10 +16,9 @@ namespace SocialNetwork.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetAsync(string username, string password)
+        public async Task<IHttpActionResult> GetAsync()
         {
-            var user = await userRepository.GetAsync(username, 
-                HashHelper.Sha512(password + username));
+            var user = await userRepository.GetAsync(GetUsernameFromClaims());
 
             if (user == null)
             {
@@ -31,9 +30,9 @@ namespace SocialNetwork.Api.Controllers
 
         [HttpGet]
         [Route("api/users/friends")]
-        public async Task<IHttpActionResult> FriendsAsync(string username, string password)
+        public async Task<IHttpActionResult> FriendsAsync()
         {
-            var user = await userRepository.GetAsync(username, HashHelper.Sha512(password + username));
+            var user = await userRepository.GetAsync(GetUsernameFromClaims());
 
             if (user == null)
             {

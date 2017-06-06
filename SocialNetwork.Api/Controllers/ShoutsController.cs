@@ -21,9 +21,9 @@ namespace SocialNetwork.Api.Controllers
             this.userRepository = userRepository;
         }
         
-        public async Task<IHttpActionResult> GetAsync(string username, string password)
+        public async Task<IHttpActionResult> GetAsync()
         {
-            var user = await userRepository.GetAsync(username, HashHelper.Sha512(password + username));
+            var user = await userRepository.GetAsync(GetUsernameFromClaims());
 
             if (user == null)
             {

@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Owin;
+using Thinktecture.IdentityModel.Clients;
 
 [assembly: OwinStartup(typeof(SocialNetwork.Web.Startup))]
 
@@ -18,50 +21,54 @@ namespace SocialNetwork.Web
     {
         public void Configuration(IAppBuilder app)
         {
-            JwtSecurityTokenHandler.InboundClaimTypeMap = new Dictionary<string, string>();
+            JwtSecurityTokenHandler.InboundClaimTypeMap
+                = new Dictionary<string, string>();
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
-                AuthenticationType = "Cookies"
+                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie
             });
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
-                ClientId = "socialnetwork_implicit",
-                Authority = ConfigurationManager.AppSettings["Authority"],
-                RedirectUri = $"{ConfigurationManager.AppSettings["RedirectUri"]}/private",
-                ResponseType = "id_token",
-                Scope = "openid profile",
+                ClientId = "socialnetwork_code",
+                Authority = "http://localhost:22710",
+                RedirectUri = "http://localhost:28037/",
+                ResponseType = "code id_token",
+                Scope = "openid profile offline_access",
+                PostLogoutRedirectUri = "http://localhost:28037",
+                SignInAsAuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
 
-                UseTokenLifetime = false,
-                SignInAsAuthenticationType = "Cookies",
-                PostLogoutRedirectUri = ConfigurationManager.AppSettings["RedirectUri"],
-                
                 Notifications = new OpenIdConnectAuthenticationNotifications
                 {
-                    SecurityTokenValidated = notification =>
+                    AuthorizationCodeReceived = async notification =>
                     {
+                        var requestResponse = await OidcClient.CallTokenEndpointAsync(
+                            new Uri("http://localhost:22710/connect/token"),
+                            new Uri("http://localhost:28037/"),
+                            notification.Code,
+                            "socialnetwork_code",
+                            "secret");
+
                         var identity = notification.AuthenticationTicket.Identity;
 
-                        identity.AddClaim(new Claim("id_token", notification.ProtocolMessage.IdToken));
+                        identity.AddClaim(new Claim("access_token", requestResponse.AccessToken));
+                        identity.AddClaim(new Claim("id_token", requestResponse.IdentityToken));
+                        identity.AddClaim(new Claim("refresh_token", requestResponse.RefreshToken));
 
-                        notification.AuthenticationTicket = new AuthenticationTicket(identity, notification.AuthenticationTicket.Properties);
-
-                        return Task.FromResult(0);
+                        notification.AuthenticationTicket = new AuthenticationTicket(
+                            identity, notification.AuthenticationTicket.Properties);
                     },
                     RedirectToIdentityProvider = notification =>
                     {
-                        if (notification.ProtocolMessage.RequestType != OpenIdConnectRequestType.LogoutRequest)
+                        if (notification.ProtocolMessage.RequestType !=
+                            OpenIdConnectRequestType.LogoutRequest)
                         {
                             return Task.FromResult(0);
                         }
 
-                        var idTokenHint = notification.OwinContext.Authentication.User.FindFirst("id_token");
-
-                        if (idTokenHint != null)
-                        {
-                            notification.ProtocolMessage.IdTokenHint = idTokenHint.Value;
-                        }
+                        notification.ProtocolMessage.IdTokenHint =
+                            notification.OwinContext.Authentication.User.FindFirst("id_token").Value;
 
                         return Task.FromResult(0);
                     }
@@ -70,3 +77,4 @@ namespace SocialNetwork.Web
         }
     }
 }
+
