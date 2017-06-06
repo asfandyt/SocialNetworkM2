@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using SocialNetwork.Api.Helpers;
 using SocialNetwork.Data.Models;
 using SocialNetwork.Data.Repositories;
+using Thinktecture.IdentityModel.WebApi;
 
 namespace SocialNetwork.Api.Controllers
 {
@@ -20,20 +20,9 @@ namespace SocialNetwork.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IHttpActionResult> GetAsync()
+        public async Task<IHttpActionResult> GetAsync(string username, string password)
         {
-            var email = ((ClaimsPrincipal) User)
-                .Claims
-                .FirstOrDefault(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-                ?.Value;
-
-            if (email == null)
-            {
-                return NotFound();
-            }
-
-            var user = await userRepository.GetAsync(email);
+            var user = await userRepository.GetAsync(username, HashHelper.Sha512(password + username));
 
             if (user == null)
             {
@@ -51,9 +40,14 @@ namespace SocialNetwork.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetAsync(string username, string password)
+        [ScopeAuthorize("read")]
+        public async Task<IHttpActionResult> GetAsync()
         {
-            var user = await userRepository.GetAsync(username, HashHelper.Sha512(password + username));
+            var claimsPrincipal = User as ClaimsPrincipal;
+
+            var username = claimsPrincipal?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier").Value;
+
+            var user = await userRepository.GetAsync(username);
 
             if (user == null)
             {

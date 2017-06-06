@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Configuration;
-using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Web;
+using System.Threading.Tasks;
 using IdentityServer3.Core.Configuration;
 using Microsoft.Owin;
 using Owin;
-using SocialNetwork.OAuth.Configuration;
 
 [assembly: OwinStartup(typeof(SocialNetwork.OAuth.Startup))]
 
@@ -17,17 +14,19 @@ namespace SocialNetwork.OAuth
     {
         public void Configuration(IAppBuilder app)
         {
+            var inMemoryManager = new InMemoryManager();
             var factory = new IdentityServerServiceFactory()
-                           .UseInMemoryUsers(Users.GetUsers())
-                           .UseInMemoryClients(Clients.GetClients())
-                           .UseInMemoryScopes(Scopes.GetScopes());
-            
+                .UseInMemoryUsers(inMemoryManager.GetUsers())
+                .UseInMemoryScopes(inMemoryManager.GetScopes())
+                .UseInMemoryClients(inMemoryManager.GetClients());
+
+            var certificate = Convert.FromBase64String(ConfigurationManager.AppSettings["SigningCertificate"]);
+
             var options = new IdentityServerOptions
             {
-                SigningCertificate = new X509Certificate2(Convert.FromBase64String(ConfigurationManager.AppSettings["SigningCertificate"]), ConfigurationManager.AppSettings["SigningCertificatePassword"]),
-                Factory = factory,
-                RequireSsl = false,
-                AuthenticationOptions = new AuthenticationOptions { EnablePostSignOutAutoRedirect = true }
+                SigningCertificate = new X509Certificate2(certificate, ConfigurationManager.AppSettings["SigningCertificatePassword"]),
+                RequireSsl = false, // DO NOT DO THIS IN 
+                Factory = factory
             };
 
             app.UseIdentityServer(options);
