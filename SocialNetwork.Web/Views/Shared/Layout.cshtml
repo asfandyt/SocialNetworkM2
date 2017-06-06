@@ -57,6 +57,7 @@
             <ul class="nav nav-pills pull-right">
                 <li><a href="/">Home</a></li>
                 <li><a href="/private">Profile</a></li>
+
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li><a href="/logout">Logout</a></li>

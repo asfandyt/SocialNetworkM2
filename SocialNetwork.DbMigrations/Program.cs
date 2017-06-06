@@ -9,8 +9,8 @@ namespace SocialNetwork.DbMigrations
     {
         public static int Main(string[] args)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["SocialNetwork"].ConnectionString ??
-                "Server=ADS-IT21; Database=SocialNetwork; Trusted_connection=true";
+            var connectionString = ConfigurationManager.ConnectionStrings["SocialNetwork"].ConnectionString ?? 
+                "Server=(local)\\SqlExpress; Database=SocialNetwork; Trusted_connection=true";
 
             var upgrader =
                 DeployChanges.To
