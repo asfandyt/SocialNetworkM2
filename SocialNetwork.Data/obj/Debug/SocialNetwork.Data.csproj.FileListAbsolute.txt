@@ -1,0 +1,8 @@
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\bin\Debug\SocialNetwork.Data.dll
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\bin\Debug\SocialNetwork.Data.pdb
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\bin\Debug\Dapper.dll
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\bin\Debug\Dapper.pdb
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\bin\Debug\Dapper.xml
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\obj\Debug\SocialNetwork.Data.csprojResolveAssemblyReference.cache
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\obj\Debug\SocialNetwork.Data.dll
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.Data\obj\Debug\SocialNetwork.Data.pdb

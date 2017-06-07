@@ -1,0 +1,10 @@
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\SocialNetwork.DbMigrations.exe.config
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\SocialNetwork.DbMigrations.exe
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\SocialNetwork.DbMigrations.pdb
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\DbUp.dll
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\DbUp.pdb
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\bin\Debug\DbUp.xml
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\obj\Debug\SocialNetwork.DbMigrations.csprojResolveAssemblyReference.cache
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\obj\Debug\SocialNetwork.DbMigrations.exe
+C:\projects\Repositories\SocialNetworkM2\SocialNetwork.DbMigrations\obj\Debug\SocialNetwork.DbMigrations.pdb
